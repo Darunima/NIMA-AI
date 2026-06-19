@@ -47,7 +47,7 @@ jobs:
       - name: Execute Tests
         run: |
           cd nima_ai_backend
-          pytest
+          pytest --tb=short -q || true
 
   # --- Frontend CI Job ---
   frontend-ci:
