@@ -1,0 +1,6 @@
+{
+  "name": "NIMA-AI",
+  "description": "NIMA-AI is an Opportunity Intelligence Platform for students and professionals. Aggregates internships, hackathons, and tech news with automated data ingestion, AI resume parsing, matching recommendations, email sync, and an AI chat assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

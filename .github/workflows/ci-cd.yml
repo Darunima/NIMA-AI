@@ -1,0 +1,126 @@
+name: NIMA AI CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  # --- Backend CI Job ---
+  backend-ci:
+    name: Backend Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          cd nima_ai_backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest black ruff
+
+      - name: Code Formatting (Black)
+        run: |
+          cd nima_ai_backend
+          black --check app/
+
+      - name: Code Linting (Ruff)
+        run: |
+          cd nima_ai_backend
+          ruff check app/
+
+      - name: Execute Tests
+        run: |
+          cd nima_ai_backend
+          pytest
+
+  # --- Frontend CI Job ---
+  frontend-ci:
+    name: Frontend Lint & Build Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: nima_ai_frontend/package.json
+
+      - name: Install Dependencies
+        run: |
+          cd nima_ai_frontend
+          npm ci
+
+      - name: Code Linting
+        run: |
+          cd nima_ai_frontend
+          npm run lint
+
+      - name: Build Next.js Static Test
+        run: |
+          cd nima_ai_frontend
+          npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+  # --- Docker Build & Deploy Job ---
+  build-and-deploy:
+    name: Build Docker Images & Deploy
+    needs: [backend-ci, frontend-ci]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Backend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nima_ai_backend
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/nima-backend:latest
+            ghcr.io/${{ github.repository }}/nima-backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and Push Frontend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nima_ai_frontend
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/nima-frontend:latest
+            ghcr.io/${{ github.repository }}/nima-frontend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Deployment hook (simulating production host update)
+      - name: Trigger Webhook/Deploy via SSH
+        if: success()
+        run: |
+          echo "Production deployment initiated."
+          # Example deployment webhook trigger or SSH execution:
+          # curl -X POST ${{ secrets.DEPLOY_WEBHOOK_URL }}
