@@ -124,8 +124,6 @@ jobs:
           tags: |
             ghcr.io/darunima/nima-ai/nima-frontend:latest
             ghcr.io/darunima/nima-ai/nima-frontend:${{ github.sha }}
-          build-args: |
-            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -1,13 +1,12 @@
 # --- Dependencies Stage ---
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
 COPY package.json package-lock.json ./
 RUN npm ci
 
 # --- Build Stage ---
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -15,13 +14,10 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production
 
-ARG GEMINI_API_KEY
-ENV GEMINI_API_KEY=$GEMINI_API_KEY
-
 RUN npm run build
 
 # --- Production Stage ---
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production \
@@ -32,14 +28,14 @@ ENV NODE_ENV=production \
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Set correct permission for prerender cache
 RUN mkdir .next && chown nextjs:nodejs .next
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy public folder if it exists (handles empty dir gracefully)
+RUN mkdir -p ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 USER nextjs
 
