@@ -10,8 +10,7 @@ import {
   Bookmark, 
   UserCircle, 
   MessageSquare, 
-  Settings,
-  ArrowLeftRight
+  Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +30,6 @@ export default function Sidebar() {
     { name: "Opportunities", href: "/opportunities", icon: Briefcase },
     { name: "News Intelligence", href: "/news", icon: Newspaper },
     { name: "Saved Bookmarks", href: "/bookmarks", icon: Bookmark },
-    { name: "AI Sync (Email)", href: "/profile", icon: ArrowLeftRight },
     { name: "NIMA Assistant", href: "/chat", icon: MessageSquare },
     { name: "Candidate Profile", href: "/profile", icon: UserCircle },
   ];
