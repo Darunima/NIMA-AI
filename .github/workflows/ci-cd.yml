@@ -65,6 +65,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd nima_ai_frontend
+          rm -rf node_modules
           npm ci
 
       - name: Code Linting
