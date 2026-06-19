@@ -56,12 +56,12 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: nima_ai_frontend/package.json
+          cache-dependency-path: nima_ai_frontend/package-lock.json
 
       - name: Install Dependencies
         run: |
           cd nima_ai_frontend
-          npm ci
+          npm install
 
       - name: Code Linting
         run: |
