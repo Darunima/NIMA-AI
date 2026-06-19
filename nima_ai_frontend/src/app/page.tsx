@@ -22,7 +22,7 @@ export default function LandingPage() {
         </h1>
 
         <p className="text-lg md:text-xl text-gray-400 max-w-2xl font-light leading-relaxed">
-          Aggregating opportunities, scraping global tech databases, sync'ing email notifications, and matching candidates through advanced vector intelligence.
+          Aggregating opportunities, scraping global tech databases, sync&apos;ing email notifications, and matching candidates through advanced vector intelligence.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
