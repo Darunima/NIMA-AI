@@ -37,7 +37,8 @@ COPY ./app ./app
 
 # Run as non-privileged system user
 RUN addgroup --system --gid 1001 appgroup && \
-    adduser --system --uid 1001 --gid 1001 appuser
+    adduser --system --uid 1001 appuser && \
+    adduser appuser appgroup
 USER appuser
 
 EXPOSE 8000
