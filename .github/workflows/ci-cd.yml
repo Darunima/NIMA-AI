@@ -107,8 +107,8 @@ jobs:
           context: ./nima_ai_backend
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/nima-backend:latest
-            ghcr.io/${{ github.repository }}/nima-backend:${{ github.sha }}
+            ghcr.io/darunima/nima-ai/nima-backend:latest
+            ghcr.io/darunima/nima-ai/nima-backend:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -118,8 +118,8 @@ jobs:
           context: ./nima_ai_frontend
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/nima-frontend:latest
-            ghcr.io/${{ github.repository }}/nima-frontend:${{ github.sha }}
+            ghcr.io/darunima/nima-ai/nima-frontend:latest
+            ghcr.io/darunima/nima-ai/nima-frontend:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
